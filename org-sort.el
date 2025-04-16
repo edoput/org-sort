@@ -44,7 +44,7 @@ Examples:
 #+SORT: creation-time
 ")
 
-(defun org-sort-set-option ()
+(defun org-sort-set-option (&rest r)
   "Read the +SORT: spec value into variable `org-sort-option'."
   (when (derived-mode-p 'org-mode)
     (let ((alist (org-collect-keywords '("SORT"))))
