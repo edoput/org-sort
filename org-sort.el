@@ -1,4 +1,4 @@
-;;; org-sort.el --- In buffer option for sorting -*- lexical binding: t; -*-
+;;; org-sort.el --- In buffer option for sorting -*- lexical-binding: t; -*-
 
 ;;; Copyright: (C) 2025 Edoardo Putti
 
@@ -55,15 +55,47 @@ Examples:
 
 (advice-add 'org-set-regexps-and-options :after #'org-sort-set-option)
 
+(defun org-sort-parse ()
+  (let ((case-sensitive nil)
+	(sorting-type nil)
+	(getkey-func nil)
+	(compare-func nil)
+	(property nil))
+    (progn
+      (named-let loop ((arg org-sort-option))
+	(pcase arg
+	  ('alphabetical (setq sorting-type ?a))
+	  ('creation-time (setq sorting-type ?c))
+	  ('deadline (setq sorting-type ?d))
+	  ('clock (setq sorting-type ?k))
+	  ('number (setq sorting-type ?n))
+	  ('todo (setq sorting-type ?o))
+	  ('priority (setq sorting-type ?p))
+	  ('scheduled (setq sorting-type ?s))
+	  ('date (setq sorting-type ?t))
+	  ('time (setq sorting-type ?t))
+	  (`(reverse ,spec)
+	   (progn
+	     (loop spec)
+	     (setq sorting-type
+		   (if (char-uppercase-p sorting-type)
+		       (downcase sorting-type)
+		     (upcase sorting-type)))))
+	  (`(with-case ,spec)
+	   (progn
+	     (setq case-sensitive (not case-sensitive))
+	     (loop spec)))
+	  (`(property ,property-name)
+	   (progn
+	     (setq sorting-type ?r)
+	     (setq property (symbol-name property-name))))
+	  ;; matches not set option
+	  (_ nil)))
+      (list case-sensitive sorting-type getkey-func compare-func property nil))))
+
 (defun org-sort-run ()
   (when (and (derived-mode-p 'org-mode) org-sort-option)
-    (let ((case-sensitive nil)
-	  (sorting-type ?r)
-	  (getkey-func nil)
-	  (compare-func nil)
-	  (property "year")
-	  (interactive? nil))
-      (org-sort-entries case-sensitive sorting-type getkey-func compare-func property interactive?))))
+    (apply #'org-sort-entries (org-sort-parse))))
 
 (add-hook 'before-save-hook #'org-sort-run)
 
