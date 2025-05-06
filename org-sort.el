@@ -94,7 +94,9 @@ Examples:
 
 (defun org-sort-run ()
   (when (and (derived-mode-p 'org-mode) org-sort-option)
-    (apply #'org-sort-entries (org-sort-parse))))
+    (save-excursion
+      (goto-char (point-min))
+      (apply #'org-sort-entries (org-sort-parse)))))
 
 (add-hook 'before-save-hook #'org-sort-run)
 
