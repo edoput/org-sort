@@ -11,14 +11,14 @@
 ;;; Commentary:
 
 ;; This package provides automatic sorting in your org buffer according to
-;; an in buffer settings. The sorting is only applied to the top-level headings.
+;; an in buffer settings.  The sorting is only applied to the top-level headings.
 
 ;;; Code:
 
 (require 'org)
 
 (defvar org-sort-option nil "Sorting spec for org-sort-entries.
-This option is controlled by in-buffer settings. Use #+SORT: value
+This option is controlled by in-buffer settings.  Use #+SORT: value
 in your header to set this variable to value.
 
 Allowed values are described by the following grammar:
@@ -41,8 +41,7 @@ Examples:
 
 #+SORT: (reverse alphabetical)
 #+SORT: (with-case alphabetical)
-#+SORT: creation-time
-")
+#+SORT: creation-time")
 
 (defun org-sort-set-option (&rest r)
   "Read the +SORT: spec value into variable `org-sort-option'."
